@@ -1507,11 +1507,11 @@ tar -xf /usr/freebsd-dist/kernel.txz -C /mnt || abort
 #
 # Prompt user for configuration options
 #
-bsdinstall time
-bsdinstall rootpass
+#bsdinstall time
+#bsdinstall rootpass
 if [ ! -f "${ss_tmp}/etc/rc.conf" -a $USE_HA -eq 0 ]; then
-   bsdinstall netconfig 2
-   bsdinstall hostname
+   #bsdinstall netconfig 2
+   #bsdinstall hostname
    _DOMAIN=""
    while read key value; do
    case "${key}" in
@@ -1527,10 +1527,14 @@ if [ ! -f "${ss_tmp}/etc/rc.conf" -a $USE_HA -eq 0 ]; then
       _HOST_DOMAIN=$(echo "$_HOST_NAME" | sed -e 's/^[^\.]*\.*//')
       echo "search $_HOST_DOMAIN" >> ${BSDINSTALL_TMPETC}/resolv.conf
    fi
-   bsdinstall netconfig 1
+   #bsdinstall netconfig 1
 fi
 
-dialog --infobox "Saving system configuration..." 3 70
+if [ $AUTO_INSTALL -ne 1 ]; then
+	dialog --infobox "Saving system configuration..."
+else
+	echo "Saving system configuration..."
+fi
 
 #?
 bsdinstall config
@@ -1563,7 +1567,12 @@ fi
 #
 # Copy over FreeBSD distribution files
 #
-dialog --infobox "Copying FreeBSD distribution files..." 3 70
+
+if [ $AUTO_INSTALL -ne 1 ]; then
+	dialog --infobox "Copying FreeBSD distribution files..." 3 70
+else
+	echo "Copying FreeBSD distribution files..."
+fi
 mkdir -p /mnt/${ROOT_DIR}/freebsd-dist
 cp /usr/freebsd-dist/*.txz /mnt/${ROOT_DIR}/freebsd-dist
 
@@ -1571,7 +1580,12 @@ cp /usr/freebsd-dist/*.txz /mnt/${ROOT_DIR}/freebsd-dist
 #
 # Copy the CDROM package repository to Statseeker's package directory
 #
-dialog --infobox "Creating package repository..." 3 70
+
+if [ $AUTO_INSTALL -ne 1 ]; then
+	dialog --infobox "Creating package repository..." 3 70
+else
+	echo "Creating package repository..." 
+fi
 cp -r /packages /mnt/${pkg_dir}
 rm /mnt/${pkg_dir}/TRANS.TBL
 
